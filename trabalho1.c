@@ -5,17 +5,25 @@
 #define SEED time(0)
 
 void printIntArray();
+
 void bubbleSort();
+
 void mergeSort();
 void merge();
+
 void quickSort();
+int particao();
 
 int main(int argc, char *argv[]){
+    if(argc <= 2){
+        puts("Entrada invalida.");
+        return 1;
+    }
+
     int *arrNum;
     int qtd = atoi(argv[2]);
     char *mode = argv[3];
-    printf("qtd: %d\n", qtd);
-    arrNum = (int*) malloc(qtd * sizeof(int));
+    arrNum = malloc(qtd * sizeof(int));
 
     srand(SEED);
     for (int i = 0; i < qtd; i++) arrNum[i] = rand();
@@ -25,17 +33,13 @@ int main(int argc, char *argv[]){
     if(mode == "-m"){
         mergeSort(arrNum, 0, qtd);
     } else if (mode == "-q") {
-        // quickSort
+        quickSort(arrNum, 0, qtd - 1); // qtd - 1 pois um deles será o pivot
     } else {
         bubbleSort(arrNum, qtd);
     }
 
     puts("\nArray sorteado:");
     printIntArray(arrNum, qtd);
-    puts("\nArray sorteado certamente:");
-    bubbleSort(arrNum, qtd);
-    printIntArray(arrNum, qtd);
-
 }
 
 void printIntArray(int arr[], int tam){
@@ -91,6 +95,28 @@ void mergeSort(int arr[], int inicio, int fim){
         merge(arr, inicio, meio, fim);
 }
 
-void quickSort(int arr[], int tam){
+int particao(int arr[], int inicio, int fim){
+    int pivot = arr[fim];
+    int j = inicio;
+    int aux;
+    for (int i = inicio; i < fim; i++) // Percorre os elementos e se for menor que o pivot, realiza a troca
+        if(arr[i] <= pivot){
+            aux = arr[i];
+            arr[i] = arr[j];
+            arr[j] = aux;
+            j++;
+        }
+    // Troca o pivot para a posição certa e retorna a posição do pivot
+    aux = arr[j];
+    arr[j] = arr[fim];
+    arr[fim] = aux;
+    return j;
+}
 
+void quickSort(int arr[], int inicio, int fim){
+    if (inicio < fim) {
+        int pivot = particao(arr, inicio, fim);
+        quickSort(arr, inicio, pivot - 1); // QuickSort com os da esquerda do pivot
+        quickSort(arr, pivot + 1, fim); // QuickSort com os da direita do pivot
+    }
 }
