@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define SEED time(0)
+#define SEED time(NULL)
 
 void printIntArray();
 
@@ -20,14 +20,13 @@ int main(int argc, char *argv[]){
         return 1;
     }
 
-    int *arrNum;
-    int qtd = atoi(argv[2]);
-    char *mode = argv[3];
+    int *arrNum, qtd = atoi(argv[3]);
+    char *mode = argv[4];
     arrNum = malloc(qtd * sizeof(int));
 
     srand(SEED);
     for (int i = 0; i < qtd; i++) arrNum[i] = rand();
-    puts("Array original:");
+    puts("Array gerado aleatoriamente:");
     printIntArray(arrNum, qtd);
     
     if(mode == "-m"){
@@ -40,6 +39,9 @@ int main(int argc, char *argv[]){
 
     puts("\nArray sorteado:");
     printIntArray(arrNum, qtd);
+    free(arrNum);
+
+    return 0;
 }
 
 void printIntArray(int arr[], int tam){
@@ -84,6 +86,8 @@ void merge(int arr[], int inicio, int meio, int fim){
             arr[i] = listaDireita[topoDireita];
             topoDireita++;
         }
+    free(listaEsquerda);
+    free(listaDireita);
 }
 
 void mergeSort(int arr[], int inicio, int fim){
