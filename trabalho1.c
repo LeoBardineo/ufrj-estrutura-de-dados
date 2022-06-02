@@ -1,4 +1,11 @@
+/*
+    Nome: Leonardo de Melo Soares
+    DRE: 120134414
+    Forma de execução: .\trabalho1 -n 10 [-m || -q](opcional)
+*/
+
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 #include <time.h>
 
@@ -20,8 +27,9 @@ int main(int argc, char *argv[]){
         return 1;
     }
 
-    int *arrNum, qtd = atoi(argv[3]);
-    char *mode = argv[4];
+    int *arrNum, qtd = atoi(argv[2]);
+    char mode = argc == 4 ? argv[3][1] : 'b';
+    char *modeName;
     arrNum = malloc(qtd * sizeof(int));
 
     srand(SEED);
@@ -29,15 +37,18 @@ int main(int argc, char *argv[]){
     puts("Array gerado aleatoriamente:");
     printIntArray(arrNum, qtd);
     
-    if(mode == "-m"){
-        mergeSort(arrNum, 0, qtd);
-    } else if (mode == "-q") {
+    if(mode == 'm'){
+        modeName = "Merge Sort";
+        mergeSort(arrNum, 0, qtd - 1);
+    } else if (mode == 'q') {
+        modeName = "Quick Sort";
         quickSort(arrNum, 0, qtd - 1); // qtd - 1 pois um deles será o pivot
     } else {
+        modeName = "Bubble Sort";
         bubbleSort(arrNum, qtd);
     }
 
-    puts("\nArray sorteado:");
+    printf("\nArray sorteado crescentemente utilizando o %s:\n", modeName);
     printIntArray(arrNum, qtd);
     free(arrNum);
 
@@ -45,8 +56,8 @@ int main(int argc, char *argv[]){
 }
 
 void printIntArray(int arr[], int tam){
-    for (int i = 0; i < tam; i++) printf("%d ", arr[i]);
-    puts("");
+    for (int i = 0; i < tam-1; i++) printf("%d, ", arr[i]);
+    printf("%d\n", arr[tam-1]);
 }
 
 void bubbleSort(int arr[], int tam){
@@ -60,43 +71,53 @@ void bubbleSort(int arr[], int tam){
             }
 }
 
-void merge(int arr[], int inicio, int meio, int fim){
-    // Dividindo a lista em lista da esquerda e da direita
+void merge(int arr[], int inicio, int meio, int fim) {
     int qtdEsquerda = meio - inicio + 1;
-    int qtdDireita = meio - fim;
+    int qtdDireita = fim - meio;
     int *listaEsquerda = malloc(qtdEsquerda * sizeof(int));
     int *listaDireita = malloc(qtdDireita * sizeof(int));
-    for (int i = 0; i < qtdEsquerda; i++) listaEsquerda[i] = arr[inicio + i];
-    for (int i = 0; i < qtdDireita; i++) listaDireita[i] = arr[meio + 1 + i];
+ 
+    for (int i = 0; i < qtdEsquerda; i++)
+        listaEsquerda[i] = arr[inicio + i];
 
-    // Ordenando e juntando/"mergeando" as duas
-    int topoEsquerda = 0;
-    int topoDireita = 0;
-    for (int i = inicio; i < fim; i++)
-        if(topoEsquerda >= qtdEsquerda) { // Já foi percorrido toda a lista da esquerda, restando apenas a da direita ser adicionada à lista.
-            arr[i] = listaDireita[topoDireita];
-            topoDireita++;
-        } else if (topoDireita >= qtdDireita) { // Só falta a da esquerda ser adicionada
-            arr[i] = listaEsquerda[topoEsquerda];
-            topoEsquerda++;
-        } else if (listaEsquerda[topoEsquerda] < listaDireita[topoDireita]) { // O topo da lista da esquerda é menor que o topo da direita
-            arr[i] = listaEsquerda[topoEsquerda];
-            topoEsquerda++;
-        } else {  // O topo da lista da direita é menor que o topo da esquerda
-            arr[i] = listaDireita[topoDireita];
-            topoDireita++;
+    for (int i = 0; i < qtdDireita; i++)
+        listaDireita[i] = arr[meio + 1 + i];
+ 
+    int i = inicio, topoEsq = 0, topoDir = 0;
+    while (topoEsq < qtdEsquerda && topoDir < qtdDireita) {
+        // O topo da esquerda é menor que o topo da direita, logo o da esquerda deve ser adicionado à lista
+        // para que o menor fique à esquerda, caso contrário, o da direita é adicionado, já que ele é o menor
+        if (listaEsquerda[topoEsq] <= listaDireita[topoDir]) {
+            arr[i] = listaEsquerda[topoEsq];
+            topoEsq++;
+        } else {
+            arr[i] = listaDireita[topoDir];
+            topoDir++;
         }
-    free(listaEsquerda);
-    free(listaDireita);
+        i++;
+    }
+
+    // Já foi percorrido toda a lista da direita, restando apenas a da esquerda ser adicionada à lista.
+    while (topoEsq < qtdEsquerda) {
+        arr[i] = listaEsquerda[topoEsq];
+        topoEsq++; i++;
+    }
+
+    // Só falta a da direita ser adicionada.
+    while (topoDir < qtdDireita) {
+        arr[i] = listaDireita[topoDir];
+        topoDir++; i++;
+    }
 }
 
-void mergeSort(int arr[], int inicio, int fim){
-    int meio;
-    if(fim - inicio > 1)
+void mergeSort(int arr[], int inicio, int fim) {
+    int meio = 0;
+    if (inicio < fim) {
         meio = (fim + inicio) / 2;
         mergeSort(arr, inicio, meio);
         mergeSort(arr, meio + 1, fim);
         merge(arr, inicio, meio, fim);
+    }
 }
 
 int particao(int arr[], int inicio, int fim){
