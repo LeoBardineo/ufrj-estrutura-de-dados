@@ -1,13 +1,12 @@
 #include <iostream>
-#include <string>
-#include <vector>
-#include <stack>
 
 using namespace std;
 
+#define MAX 500 // não pode depois de 719 (?)
+
 class ListaInt {
     public:
-        int arr[1000], tamanho;
+        int arr[MAX], tamanho;
         ListaInt();
         void inserir(int num);
         void printarListaInt();
@@ -15,7 +14,7 @@ class ListaInt {
 
 ListaInt::ListaInt(){
     tamanho = 0;
-};
+}
 
 void ListaInt::inserir(int num){
     arr[tamanho] = num;
@@ -31,8 +30,8 @@ void ListaInt::printarListaInt(){
 
 class Grafo{
     public:
-        ListaInt adj[1000], topologicaOrdenada;
-        bool visitados[1000];
+        ListaInt adj[MAX], topologicaOrdenada;
+        bool visitados[MAX];
         int vertices;
         Grafo(int v);
         void adicionaNo(int u, int v);
@@ -42,7 +41,7 @@ class Grafo{
 
 Grafo::Grafo(int v){
     vertices = v;
-};
+}
 
 void Grafo::adicionaNo(int u, int v){
     adj[u].inserir(v);
@@ -51,7 +50,6 @@ void Grafo::adicionaNo(int u, int v){
 void Grafo::visitaVertice(int vertice){
     visitados[vertice] = true;
 
-    // for(ListaInt l : adj){
     for(int i = 0; i < adj->tamanho; i++){
         ListaInt l = adj[i];
         for(int j = 0; j < l.tamanho; j++){
@@ -84,21 +82,21 @@ void Grafo::printaOrdenacaoTopologica(){
 // "# vertices" "# arestas"
 int main(){
     // Entrada
-    cout << "===== Ordenação Topológica =====" << endl;
-    cout << "Insira o número de vertices e as arestas:" << endl;
+    cout << "===== Ordenacao Topologica =====" << endl;
+    cout << "Insira o numero de vertices e as arestas:" << endl;
     int vertices, arestas;
     cin >> vertices >> arestas;
     Grafo grafo(vertices);
-    cout << endl << "Insira as adjacências indicando o vértice de origem e o de destino:" << endl;
+    cout << endl << "Insira as adjacencias indicando o vertice de origem e o de destino:" << endl;
     for (int i = 0; i < arestas; i++) {
-        cout << i+1 << "ª aresta: ";
+        cout << i+1 << "a adjacência: ";
         int u, v;
         cin >> u >> v;
         grafo.adicionaNo(u, v);
     }
 
     // Saída
-    cout << endl << "Ordenação topológica: " << endl;
+    cout << endl << "Ordenacao topologica: " << endl;
     grafo.printaOrdenacaoTopologica();
     return 0;
 }
