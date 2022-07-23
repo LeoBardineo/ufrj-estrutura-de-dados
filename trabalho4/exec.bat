@@ -1,0 +1,1 @@
+g++ trabalho4.cpp -o trabalho4 && .\trabalho4 < 1.in
